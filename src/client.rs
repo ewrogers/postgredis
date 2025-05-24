@@ -12,6 +12,7 @@ pub async fn handle_client(mut stream: TcpStream, _event_tx: UnboundedSender<Com
         match stream.read(&mut recv_buffer).await {
             Ok(0) => {
                 println!("Client disconnected");
+                break;
             }
             Ok(n) => {
                 parser.append(&recv_buffer[..n]);
