@@ -124,3 +124,83 @@ impl RespParser {
 fn find_crlf(buffer: &[u8]) -> Option<usize> {
     buffer.windows(2).position(|window| window == b"\r\n")
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // Parses all possible values from an input buffer
+    fn parse_all(buffer: &[u8]) -> Vec<RespValue> {
+        let mut parser = RespParser::new();
+        parser.append(buffer);
+
+        let mut results = Vec::new();
+        while let Some(item) = parser.parse() {
+            results.push(item);
+        }
+        results
+    }
+
+    #[test]
+    fn test_simple_string() {
+        let got = parse_all(b"+OK\r\n");
+        assert_eq!(got, vec![RespValue::SimpleString("OK".into())]);
+    }
+
+    #[test]
+    fn test_error() {
+        let got = parse_all(b"-ERR Something went wrong\r\n");
+        assert_eq!(
+            got,
+            vec![RespValue::Error("ERR Something went wrong".into())]
+        );
+    }
+
+    #[test]
+    fn test_integer() {
+        let got = parse_all(b":12345");
+        assert_eq!(got, vec![RespValue::Integer(12345)]);
+    }
+
+    #[test]
+    fn test_bulk_string() {
+        let got = parse_all(b"$6\r\nfoobar\r\n");
+        assert_eq!(got, vec![RespValue::BulkString(b"foobar".to_vec())]);
+    }
+
+    #[test]
+    fn test_bulk_string_empty() {
+        let got = parse_all(b"$0\r\n\r\n");
+        assert_eq!(got, vec![RespValue::BulkString(b"".to_vec())]);
+    }
+
+    #[test]
+    fn test_null_bulk_string() {
+        let got = parse_all(b"$-1\r\n");
+        assert_eq!(got, vec![RespValue::NullBulkString()]);
+    }
+
+    #[test]
+    fn test_array() {
+        let got = parse_all(b"*2\r\n$3\r\nfoo\r\n$3\r\nbar\r\n");
+        assert_eq!(
+            got,
+            vec![RespValue::Array(vec![
+                RespValue::BulkString(b"foo".to_vec()),
+                RespValue::BulkString(b"bar".to_vec()),
+            ])]
+        );
+    }
+
+    #[test]
+    fn test_array_empty() {
+        let got = parse_all(b"*0\r\n");
+        assert_eq!(got, vec![RespValue::Array(Vec::new())]);
+    }
+
+    #[test]
+    fn test_null_array() {
+        let got = parse_all(b"*-1\r\n");
+        assert_eq!(got, vec![RespValue::NullArray()]);
+    }
+}
