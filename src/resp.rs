@@ -70,20 +70,20 @@ impl RespParser {
         let len_end = find_crlf(&self.buffer)?;
         let len_string = String::from_utf8(self.buffer[1..len_end].to_vec()).ok()?;
         let len: isize = len_string.parse().ok()?;
-        let header_bytes = len_end + 2;
+        let header_size = len_end + 2;
 
         if len < 0 {
-            self.buffer.drain(..header_bytes);
+            self.buffer.drain(..header_size);
             return Some(RespValue::NullBulkString());
         }
 
-        let total_size = header_bytes + (len as usize) + 2;
+        let total_size = header_size + (len as usize) + 2;
         if self.buffer.len() < total_size {
             return None;
         }
 
-        let data = self.buffer[header_bytes..header_bytes + (len as usize)].to_vec();
-        if &self.buffer[header_bytes..header_bytes + len_end] != b"\r\n" {
+        let data = self.buffer[header_size..header_size + (len as usize)].to_vec();
+        if &self.buffer[header_size + (len as usize)..total_size] != b"\r\n" {
             return None;
         }
         self.buffer.drain(..total_size);
@@ -92,10 +92,10 @@ impl RespParser {
 
     // An array starts with '*', count, CRLF, and then each RESP type serialized for count
     fn parse_array(&mut self) -> Option<RespValue> {
-        let header_end = find_crlf(&self.buffer)?;
-        let count_string = String::from_utf8(self.buffer[1..header_end].to_vec()).ok()?;
+        let header_size = find_crlf(&self.buffer)?;
+        let count_string = String::from_utf8(self.buffer[1..header_size].to_vec()).ok()?;
         let count: isize = count_string.parse().ok()?;
-        let mut offset = header_end + 2;
+        let mut offset = header_size + 2;
 
         if count < 0 {
             self.buffer.drain(..offset);
@@ -158,7 +158,7 @@ mod tests {
 
     #[test]
     fn test_integer() {
-        let got = parse_all(b":12345");
+        let got = parse_all(b":12345\r\n");
         assert_eq!(got, vec![RespValue::Integer(12345)]);
     }
 
