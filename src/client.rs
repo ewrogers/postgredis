@@ -4,7 +4,7 @@ use tokio::io::AsyncReadExt;
 use tokio::net::TcpStream;
 use tokio::sync::mpsc::UnboundedSender;
 
-pub async fn handle_client(mut stream: TcpStream, _event_tx: UnboundedSender<ClientCommand>) {
+pub async fn handle_client(mut stream: TcpStream, client_event_tx: UnboundedSender<ClientCommand>) {
     let mut parser = RespParser::new();
     let mut recv_buffer = [0; 4096];
 
@@ -17,8 +17,10 @@ pub async fn handle_client(mut stream: TcpStream, _event_tx: UnboundedSender<Cli
             Ok(n) => {
                 parser.append(&recv_buffer[..n]);
                 while let Some(resp) = parser.parse() {
-                    println!("Client message: \"{:?}\"", resp);
-                    // TODO: map resp value to command (or error)
+                    match ClientCommand::try_from(resp) {
+                        Ok(cmd) => client_event_tx.send(cmd).unwrap(),
+                        Err(e) => println!("Client command error: {:?}", e),
+                    }
                 }
             }
             Err(e) => {
