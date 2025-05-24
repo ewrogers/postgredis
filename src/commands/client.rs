@@ -13,7 +13,7 @@ impl TryFrom<RespValue> for ClientCommand {
         match resp {
             RespValue::Array(items) => {
                 if items.is_empty() {
-                    return Err(CommandParseError::ArityMismatch);
+                    return Err(CommandParseError::InvalidSyntax);
                 }
 
                 let (head, tail) = items.split_first().unwrap();
@@ -35,7 +35,7 @@ impl TryFrom<RespValue> for ClientCommand {
                                 ),
                                 _ => return Err(CommandParseError::InvalidType),
                             },
-                            n => return Err(CommandParseError::ArityMismatch),
+                            _ => return Err(CommandParseError::ArityMismatch(command_name)),
                         };
                         Ok(ClientCommand::Ping(msg))
                     }
