@@ -11,6 +11,7 @@ pub enum RespValue {
     NullArray(),
 }
 
+// Displays the value as a comma-separated list of values (useful for debug output)
 impl fmt::Debug for RespValue {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
@@ -33,6 +34,7 @@ impl fmt::Debug for RespValue {
     }
 }
 
+// Displays the value as the RESP protocol string representation
 impl fmt::Display for RespValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
