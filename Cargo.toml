@@ -1,6 +1,13 @@
 [package]
 name = "postgredis"
 version = "0.1.0"
+authors = ["Erik Rogers <ewrogers@gmail.com>"]
 edition = "2024"
+description = "Redis-compliant server built on Postgres"
+homepage = "https://github.com/ewrogers/postgredis"
+repository = "https://github.com/ewrogers/postgredis"
+license = "MIT"
+keywords = ["redis", "postgres", "server"]
+categories = ["database"]
 
 [dependencies]
