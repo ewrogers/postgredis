@@ -1,13 +1,4 @@
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum RespValue {
-    SimpleString(String),
-    Error(String),
-    Integer(i64),
-    BulkString(Vec<u8>),
-    NullBulkString(),
-    Array(Vec<RespValue>),
-    NullArray(),
-}
+use crate::resp::RespValue;
 
 pub struct RespParser {
     buffer: Vec<u8>,

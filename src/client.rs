@@ -17,7 +17,7 @@ pub async fn handle_client(mut stream: TcpStream, _event_tx: UnboundedSender<Com
             Ok(n) => {
                 parser.append(&recv_buffer[..n]);
                 while let Some(resp) = parser.parse() {
-                    println!("Client message: {:?}", resp);
+                    println!("Client message: \"{:?}\"", resp);
                     // TODO: map resp value to command (or error)
                 }
             }
