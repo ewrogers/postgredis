@@ -13,7 +13,7 @@ your existing Postgres deployment as a Redis-compatible server.
 
 Key benefits include:
 
-- **Zero Additional Infrastructure**: Uses your existing Postgres database
+- **Minimal Infrastructure**: Uses your existing Postgres database
   as a key-value backend
 - **Advanced Features**: Inherits Postgres' robust functionality and extensions
 - **Pub/Sub Layer**: Provides Redis-compatible publish/subscribe functionality
@@ -28,8 +28,12 @@ Key benefits include:
 This approach simplifies your stack while providing the benefits of both Redis
 and Postgres in a single, efficient package.
 
-Given it uses Postgres, even more extended functionality and commands can be
-implemented that go beyond the normal Redis capabilities.
+## Goals
+
+- 100% Redis-compatible server
+- Same or higher performance and throughput
+- Lower memory footprint
+- Extended command set for more functionality
 
 ## Implemented Commands
 
