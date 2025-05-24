@@ -20,7 +20,7 @@ impl fmt::Display for CommandParseError {
         match self {
             CommandParseError::InvalidSyntax => write!(f, "syntax error"),
             CommandParseError::InvalidType => {
-                write!(f, "syntax error")
+                write!(f, "invalid data type")
             }
             CommandParseError::InvalidUtf8 => {
                 write!(f, "invalid utf-8 string")
