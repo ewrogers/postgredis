@@ -2,6 +2,7 @@ mod args;
 pub mod client;
 pub mod server;
 
+pub use args::CommandArgs;
 pub use client::ClientCommand;
 use std::fmt;
 
@@ -18,7 +19,6 @@ impl fmt::Display for CommandParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             CommandParseError::InvalidSyntax => write!(f, "syntax error"),
-
             CommandParseError::InvalidType => {
                 write!(f, "syntax error")
             }
