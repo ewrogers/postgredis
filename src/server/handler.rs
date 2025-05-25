@@ -4,6 +4,7 @@ use crate::server::ServerCommand;
 pub fn handle_client_event(event: &ClientEvent) {
     let tx = &event.responder;
 
+    #[allow(unreachable_patterns)]
     let response: Option<ServerCommand> = match &event.command {
         ClientCommand::Ping(message) => Some(ServerCommand::Pong(message.clone())),
         _ => None,

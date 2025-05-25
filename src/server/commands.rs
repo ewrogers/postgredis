@@ -1,5 +1,6 @@
 use crate::resp::RespValue;
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ServerCommand {
     Pong(Option<String>),
@@ -7,6 +8,7 @@ pub enum ServerCommand {
     Error(String),
 }
 
+#[allow(unreachable_patterns)]
 impl Into<RespValue> for ServerCommand {
     fn into(self) -> RespValue {
         match self {
