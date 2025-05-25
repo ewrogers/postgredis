@@ -10,7 +10,6 @@ license = "MIT"
 keywords = ["redis", "postgres", "server"]
 categories = ["database"]
 readme = "README.md"
-license-file = "LICENSE"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }

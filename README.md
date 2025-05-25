@@ -4,93 +4,26 @@ Redis server using Postgres as a backend, written in Rust.
 
 Inspired by [Fireship's Video](https://www.youtube.com/watch?v=3JW732GrMdg).
 
-## Why does this exist?
+## Architecture
 
-Most modern applications already rely on PostgreSQL as their primary database.
-Instead of running a separate Redis instance that requires additional
-infrastructure, monitoring, and maintenance, Postgedis allows you to leverage
-your existing Postgres deployment as a Redis-compatible server.
+This project implements a single-threaded event loop system using Tokio's
+`current_thread` runtime. This approach provides efficient handling of
+concurrent connections without the complexity of multi-threading.
 
-Key benefits include:
+### Event Loop System
 
-- **Minimal Infrastructure**: Uses your existing Postgres database
-  as a key-value backend
-- **Advanced Features**: Inherits Postgres' robust functionality and extensions
-- **Pub/Sub Layer**: Provides Redis-compatible publish/subscribe functionality
-- **High Performance**: Written in Rust for optimal speed and memory efficiency
-- **Small Footprint**: Minimal resource overhead as it's just a thin
-  compatibility layer
-- **Familiar Interface**: Uses the standard Redis protocol, working with
-  existing Redis clients
-- **Data Consistency**: Single source of truth for both your application data
-  and caching layer
+- Uses Tokio's async runtime for non-blocking I/O operations
+- Single-threaded execution model for predictable behavior
+- Handles multiple client connections concurrently through `async`/`await`
 
-This approach simplifies your stack while providing the benefits of both Redis
-and Postgres in a single, efficient package.
+### Client Commands
 
-## Goals
+- Implements RESP (Redis Serialization Protocol) for command parsing
+- Supports basic Redis-compatible commands
+- Asynchronous command processing within the event loop
 
-- 100% Redis-compatible server
-- Same or higher performance and throughput
-- Lower memory footprint
-- Extended command set for more functionality
+### Server Commands
 
-## Implemented Commands
-
-### Key-Value Commands
-
-| Command | Status |
-|---------|--------|
-| GET     | ❌      |
-| SET     | ❌      |
-| DEL     | ❌      |
-| EXISTS  | ❌      |
-| EXPIRE  | ❌      |
-| TTL     | ❌      |
-
-### List Commands
-
-| Command | Status |
-|---------|--------|
-| LPUSH   | ❌      |
-| RPUSH   | ❌      |
-| LPOP    | ❌      |
-| RPOP    | ❌      |
-| LLEN    | ❌      |
-| LRANGE  | ❌      |
-
-### Set Commands
-
-| Command   | Status |
-|-----------|--------|
-| SADD      | ❌      |
-| SREM      | ❌      |
-| SMEMBERS  | ❌      |
-| SISMEMBER | ❌      |
-| SCARD     | ❌      |
-
-### Hash Commands
-
-| Command | Status |
-|---------|--------|
-| HSET    | ❌      |
-| HGET    | ❌      |
-| HDEL    | ❌      |
-| HGETALL | ❌      |
-| HEXISTS | ❌      |
-
-### Sorted Set Commands
-
-| Command | Status |
-|---------|--------|
-| ZADD    | ❌      |
-| ZREM    | ❌      |
-| ZRANGE  | ❌      |
-| ZRANK   | ❌      |
-| ZCARD   | ❌      |
-
-### Other Commands
-
-| Command | Status |
-|---------|--------|
-| PING    | ❌      |
+- Internal command representation for request handling
+- Supports responses like PONG, Error, and generic RESP responses
+- Converts server commands to RESP format for client communication
