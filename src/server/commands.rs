@@ -13,8 +13,8 @@ impl Into<RespValue> for ServerCommand {
     fn into(self) -> RespValue {
         match self {
             ServerCommand::Pong(message) => match message {
-                Some(message) => {
-                    let output = format!("PONG {}", message);
+                Some(msg) => {
+                    let output = format!("PONG {}", msg);
                     RespValue::BulkString(output.into_bytes())
                 }
                 None => RespValue::SimpleString("PONG".into()),
