@@ -1,4 +1,4 @@
-use crate::commands::ClientCommand;
+use crate::client::commands::ClientCommand;
 use crate::resp::RespParser;
 use tokio::io::AsyncReadExt;
 use tokio::net::TcpStream;
