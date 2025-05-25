@@ -27,3 +27,13 @@ concurrent connections without the complexity of multi-threading.
 - Internal command representation for request handling
 - Supports responses like PONG, Error, and generic RESP responses
 - Converts server commands to RESP format for client communication
+
+### Data Flow
+
+Below is a diagram showing how data flows through the system:
+
+`Raw Recv -> RESP Parser -> Client Command -> Event Queue -> Server Command 
+-> RESP Value -> Raw Send`
+
+This allows decoupled communication between the client and server,
+especially when handling async fetching and background tasks.
