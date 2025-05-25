@@ -34,12 +34,14 @@ impl Server {
                 Ok((stream, addr)) = self.listener.accept() => {
                     println!("Client connected {}", addr);
                     let tx = self.client_event_tx.clone();
+
+                    // Start a new task for the client to handle send/recv loop
                     tokio::spawn(async move {
                         handle_client(stream, tx).await
                     });
                 }
 
-                // Receive the next command from the client queue
+                // Receive the next available event from clients
                 Some(event) = self.client_event_rx.recv() => {
                     event_queue.push_back(event);
                 }
