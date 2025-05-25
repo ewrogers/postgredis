@@ -14,6 +14,7 @@ pub async fn handle_client(stream: TcpStream, client_event_tx: UnboundedSender<C
     // Start the background writer (send) loop
     tokio::spawn(async move {
         while let Some(command) = server_command_rx.recv().await {
+            // Convert the server command into a serializable RESP response string
             let resp: RespValue = command.into();
             let output = resp.to_string();
 
@@ -36,13 +37,22 @@ pub async fn handle_client(stream: TcpStream, client_event_tx: UnboundedSender<C
             }
             Ok(n) => {
                 parser.append(&recv_buffer[..n]);
+
                 while let Some(resp) = parser.parse() {
                     match ClientCommand::try_from(resp) {
+                        // Emit a client event with the command parsed
                         Ok(command) => {
                             let event = ClientEvent::new(command, server_command_tx.clone());
                             client_event_tx.send(event).unwrap();
                         }
-                        Err(e) => println!("Client command error: {:?}", e),
+                        // Queue a server error to be written to the client socket
+                        Err(e) => {
+                            let message = e.to_string();
+                            server_command_tx
+                                .send(ServerCommand::Error(message))
+                                .unwrap();
+                            println!("Client command error: {:?}", e)
+                        }
                     }
                 }
             }

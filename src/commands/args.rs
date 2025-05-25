@@ -36,6 +36,7 @@ impl<'a> CommandArgs<'a> {
         }
     }
 
+    #[allow(dead_code)]
     pub fn take_int(&self, index: usize) -> Result<i64, CommandParseError> {
         match self.args.get(index) {
             Some(RespValue::Integer(i)) => Ok(*i),
@@ -49,6 +50,7 @@ impl<'a> CommandArgs<'a> {
         }
     }
 
+    #[allow(dead_code)]
     pub fn take_opt_int(&self, index: usize) -> Result<Option<i64>, CommandParseError> {
         if index < self.len() {
             let int_value = self.take_int(index)?;
