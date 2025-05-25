@@ -45,7 +45,7 @@ impl Server {
                     match ClientCommand::try_from(resp) {
                         Ok(command) => client_command_queue.push_back(command),
                         Err(err) => {
-                            eprintln!("Client disconnected: {}", err);
+                            eprintln!("Client error: {}", err);
                         }
                     }
                 }
