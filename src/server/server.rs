@@ -1,4 +1,5 @@
 use crate::client::{handle_client, ClientEvent};
+use crate::server::handler::handle_client_event;
 use std::collections::VecDeque;
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
@@ -49,7 +50,7 @@ impl Server {
 
             // Process the event queue
             while let Some(event) = event_queue.pop_front() {
-                println!("Command: {:?}", event.command);
+                handle_client_event(&event);
             }
         }
     }

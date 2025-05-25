@@ -1,4 +1,5 @@
 mod commands;
+mod handler;
 mod server;
 
 pub use commands::ServerCommand;
