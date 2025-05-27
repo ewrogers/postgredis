@@ -5,6 +5,7 @@ use crate::resp::RespValue;
 pub enum ServerCommand {
     Pong(Option<String>),
     Response(RespValue),
+    Ok,
     Error(String),
 }
 
@@ -20,6 +21,7 @@ impl Into<RespValue> for ServerCommand {
                 None => RespValue::SimpleString("PONG".into()),
             },
             ServerCommand::Response(value) => value,
+            ServerCommand::Ok => RespValue::SimpleString("OK".into()),
             ServerCommand::Error(message) => RespValue::Error(message),
             _ => RespValue::SimpleString("OK".into()),
         }

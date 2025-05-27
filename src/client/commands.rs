@@ -3,6 +3,7 @@ use crate::resp::RespValue;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ClientCommand {
+    Get(String),
     Ping(Option<String>),
 }
 
@@ -15,6 +16,7 @@ impl TryFrom<RespValue> for ClientCommand {
                 return Err(CommandParseError::InvalidSyntax);
             }
 
+            // Pull the command name from the head of the argument list
             let command_name = match array.remove(0) {
                 RespValue::BulkString(bs) => String::from_utf8(bs)
                     .map_err(|_| CommandParseError::InvalidUtf8)?
@@ -24,6 +26,14 @@ impl TryFrom<RespValue> for ClientCommand {
 
             let args = CommandArgs::new(&array);
             match command_name.as_str() {
+                // GET [key]
+                "get" => {
+                    if args.len() != 1 {
+                        return Err(CommandParseError::ArityMismatch(command_name));
+                    }
+                    let key = args.take_string(0)?;
+                    Ok(ClientCommand::Get(key))
+                }
                 // PING [message]
                 "ping" => {
                     if args.len() > 1 {
